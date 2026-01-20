@@ -1,0 +1,44 @@
+Database Schema: Task Manager
+
+----------------------------------------
+Table: users
+----------------------------------------
+Columns:
+  - id               : bigint, PRIMARY KEY, auto increment
+  - name             : varchar, NOT NULL
+  - email            : varchar, NOT NULL, UNIQUE
+  - password_digest  : varchar, NOT NULL
+  - created_at       : datetime, NOT NULL
+  - updated_at       : datetime, NOT NULL
+
+Indexes:
+  - UNIQUE INDEX on (email)
+
+
+
+----------------------------------------
+Table: tasks
+----------------------------------------
+Columns:
+  - id         : bigint, PRIMARY KEY, auto increment
+  - user_id    : bigint, NOT NULL, FOREIGN KEY → users.id
+  - title      : varchar, NOT NULL
+  - priority   : int, NOT NULL, default 1
+                (enum-like: 0 = low, 1 = medium, 2 = high)
+  - status     : int, NOT NULL, default 0
+                (enum-like: 0 = todo, 1 = in_progress, 2 = done)
+  - due_date   : date, NULL allowed
+  - created_at : datetime, NOT NULL
+  - updated_at : datetime, NOT NULL
+
+Indexes:
+  - INDEX on (user_id)
+  - INDEX on (user_id, status)
+  - INDEX on (user_id, priority)
+  - INDEX on (user_id, due_date)
+
+
+
+Relationships:
+  - One user → many tasks
+  - Each task must belong to exactly one user (enforced by FOREIGN KEY)

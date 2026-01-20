@@ -1,0 +1,48 @@
+<h2>Your Tasks</h2>
+
+<p>
+  <%= link_to "New Task", new_task_path %>
+</p>
+
+<h3>Filter</h3>
+<p>
+  Status:
+  <%= link_to "All", tasks_path %> |
+  <% Task.statuses.keys.each do |s| %>
+    <%= link_to s.humanize, tasks_path(status: s, sort: params[:sort], direction: params[:direction]) %>
+    <% unless s == Task.statuses.keys.last %> | <% end %>
+  <% end %>
+</p>
+
+<h3>Sort</h3>
+<p>
+  <%= link_to "Due date (asc)", tasks_path(status: params[:status], sort: "due_date", direction: "asc") %> |
+  <%= link_to "Due date (desc)", tasks_path(status: params[:status], sort: "due_date", direction: "desc") %> |
+  <%= link_to "Priority (asc)", tasks_path(status: params[:status], sort: "priority", direction: "asc") %> |
+  <%= link_to "Priority (desc)", tasks_path(status: params[:status], sort: "priority", direction: "desc") %>
+</p>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Title</th>
+    <th>Status</th>
+    <th>Priority</th>
+    <th>Due date</th>
+    <th>Owner</th>
+    <th>Actions</th>
+  </tr>
+
+  <% @tasks.each do |task| %>
+    <tr>
+      <td><%= link_to task.title, task_path(task) %></td>
+      <td><%= task.status.humanize %></td>
+      <td><%= task.priority.humanize %></td>
+      <td><%= task.due_date || "-" %></td>
+      <td><%= task.user.name %></td>
+      <td>
+        <%= link_to "Edit", edit_task_path(task) %> |
+        <%= button_to "Delete", task_path(task), method: :delete, data: { turbo_confirm: "Delete this task?" } %>
+      </td>
+    </tr>
+  <% end %>
+</table>
