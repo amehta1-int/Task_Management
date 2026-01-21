@@ -6,26 +6,17 @@ class TasksController < ApplicationController
     @status_filter = params[:status] #which status to filter tasks by
     @sort = params[:sort]  #which column to sort on (due_date,priority,etc.)
     @direction = params[:direction] == "desc" ? "desc" : "asc" #sort direction(asc or desc), defaults to "asc" unless explicitly "desc"
-    #Starts with all tasks belonging to the logged-in user, eager loading their associated user records. This means Rails loads the related user data for all tasks in advance, in a single query, so we dont hit the DB everytime we call task.user. This is optimized.
-    #base = current_user.tasks.includes(:user)  
-    base= current_user.tasks   #get all the tasks of the current logged in user
-    #Apply a filter so only tasks with the desired status remain.
-    base= base.by_status(@status_filter)   #uses scope to easily filter using the status
-
-    if @sort == "due_date"
-      @tasks= base.order(due_date: @direction)
-    elsif @sort == "priority"
-      @tasks= base.order(priority: @direction)
-    else
-      @tasks = base.order(created_at: :desc)
-    end 
+    @tasks = Tasks::Query.new(
+      user: current_user,
+      status: @status_filter,
+      sort: @sort,
+      direction: @direction
+    ).call
 
     respond_to do |format|
       format.html
       format.json do
-        render json: @tasks.as_json(
-          only: [:id, :title, :status, :priority, :due_date, :created_at, :updated_at]
-        ), status: :ok
+        render json: Tasks::Json.many(@tasks), status: :ok
       end
     end
   end
@@ -35,9 +26,7 @@ class TasksController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: @task.as_json(
-          only: [:id, :title, :status, :priority, :due_date, :created_at, :updated_at]
-        ), status: :ok
+        render json: Tasks::Json.one(@task), status: :ok
       end
     end
   end
@@ -48,17 +37,15 @@ class TasksController < ApplicationController
   end
 
   def create  #creates a new task with the strong parameters
-    @task = current_user.tasks.new(task_params)
+    @task = Tasks::Create.new(user: current_user, params: task_params).call
 
-    if @task.save
+    if @task.persisted?
       flash[:notice] = "Task created."
 
       respond_to do |format|
         format.html { redirect_to @task }
         format.json do
-          render json: @task.as_json(
-            only: [:id, :title, :status, :priority, :due_date, :created_at, :updated_at]
-          ), status: :created
+          render json: Tasks::Json.one(@task), status: :created
         end
       end
     else
@@ -77,15 +64,13 @@ class TasksController < ApplicationController
 
 
   def update
-    if @task.update(task_params)
+    if Tasks::Update.new(task: @task, params: task_params).call
       flash[:notice] = "Task updated."
 
       respond_to do |format|
         format.html { redirect_to @task }
         format.json do
-          render json: @task.as_json(
-            only: [:id, :title, :status, :priority, :due_date, :created_at, :updated_at]
-          ), status: :ok
+          render json: Tasks::Json.one(@task), status: :ok
         end
       end
     else
