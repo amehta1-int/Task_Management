@@ -16,7 +16,9 @@ class TasksController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: Tasks::Json.many(@tasks), status: :ok
+        render json: @tasks.as_json(
+          only: [:id, :title, :status, :priority, :due_date, :created_at, :updated_at]
+        ), status: :ok
       end
     end
   end
@@ -26,7 +28,9 @@ class TasksController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: Tasks::Json.one(@task), status: :ok
+        render json: @task.as_json(
+          only: [:id, :title, :status, :priority, :due_date, :created_at, :updated_at]
+        ), status: :ok
       end
     end
   end
@@ -45,7 +49,9 @@ class TasksController < ApplicationController
       respond_to do |format|
         format.html { redirect_to @task }
         format.json do
-          render json: Tasks::Json.one(@task), status: :created
+          render json: @task.as_json(
+            only: [:id, :title, :status, :priority, :due_date, :created_at, :updated_at]
+          ), status: :created
         end
       end
     else
@@ -70,7 +76,9 @@ class TasksController < ApplicationController
       respond_to do |format|
         format.html { redirect_to @task }
         format.json do
-          render json: Tasks::Json.one(@task), status: :ok
+          render json: @task.as_json(
+            only: [:id, :title, :status, :priority, :due_date, :created_at, :updated_at]
+          ), status: :ok
         end
       end
     else
