@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+    encrypts :email, deterministic: true
     has_secure_password   #bcrypt- Rails expects users table to have a password_digest column. This is where hashed password is stored. Automatic hashing: When you assign user.password = "secret", Rails automatically hashes it with bcrypt and stores the result in password_digest.
   
     has_many :tasks, dependent: :destroy

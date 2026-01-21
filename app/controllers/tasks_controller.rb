@@ -7,19 +7,18 @@ class TasksController < ApplicationController
     @sort = params[:sort]  #which column to sort on (due_date,priority,etc.)
     @direction = params[:direction] == "desc" ? "desc" : "asc" #sort direction(asc or desc), defaults to "asc" unless explicitly "desc"
     #Starts with all tasks belonging to the logged-in user, eager loading their associated user records. This means Rails loads the related user data for all tasks in advance, in a single query, so we dont hit the DB everytime we call task.user. This is optimized.
-    base = current_user.tasks.includes(:user)  
+    #base = current_user.tasks.includes(:user)  
+    base= current_user.tasks   #get all the tasks of the current logged in user
     #Apply a filter so only tasks with the desired status remain.
-    base = base.by_status(@status_filter)   #uses scope to easily filter using the status
+    base= base.by_status(@status_filter)   #uses scope to easily filter using the status
 
-    @tasks =   #chooses how to sort tasks, by due_date or priority (as requested). Otherwise defaults to newest tasks.
-      case @sort
-      when "due_date"
-        base.order(due_date: @direction)
-      when "priority"
-        base.order(priority: @direction)
-      else
-        base.order(created_at: :desc)
-      end
+    if @sort == "due_date"
+      @tasks= base.order(due_date: @direction)
+    elsif @sort == "priority"
+      @tasks= base.order(priority: @direction)
+    else
+      @tasks = base.order(created_at: :desc)
+    end 
 
     respond_to do |format|
       format.html
@@ -31,6 +30,7 @@ class TasksController < ApplicationController
     end
   end
 
+
   def show
     respond_to do |format|
       format.html
@@ -41,6 +41,7 @@ class TasksController < ApplicationController
       end
     end
   end
+
 
   def new
     @task = current_user.tasks.new
@@ -70,8 +71,10 @@ class TasksController < ApplicationController
     end
   end
 
+
   def edit
   end
+
 
   def update
     if @task.update(task_params)
@@ -95,6 +98,7 @@ class TasksController < ApplicationController
     end
   end
 
+  
   def destroy
     @task.destroy
     flash[:notice] = "Task deleted."

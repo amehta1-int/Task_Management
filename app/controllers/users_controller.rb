@@ -6,16 +6,9 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)  #ORM command on model
-    #The bang methods (save!, create!) raise exceptions if validations fail or the DB rejects the insert.
+    
     ActiveRecord::Base.transaction do
       @user.save!   #ORM command on instance variable
-
-      @user.tasks.create!(    #ORM command on association-> one user has many tasks
-        title: "Welcome! Create your first real task",
-        status: :todo,
-        priority: :medium,
-        due_date: Date.today + 7.days
-      )
     end
 
     session[:user_id] = @user.id  #Stores the new user's ID in the session cookie. This logs the user immediately in after signup.

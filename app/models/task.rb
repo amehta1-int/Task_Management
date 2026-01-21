@@ -8,9 +8,11 @@ class Task < ApplicationRecord
   validates :status, presence: true
   validates :priority, presence: true
 
-  scope :by_status, ->(s) do   #to use this scope we write by_status()
-    return all if s.blank?     #Return all tasks if the status is left blank
-    return all unless statuses.key?(s)   #If status is valid, then return all tasks that match the status
-    where(status: statuses[s])
+  scope :by_status, ->(status) do   #defines a scope, that accepts the status, converts it to valid enums and return all those tasks with the status
+    if status.present? && statuses.key?(status)
+      where(status: status)
+    else 
+      all 
+    end 
   end
 end
