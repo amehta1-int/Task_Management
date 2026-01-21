@@ -7,7 +7,7 @@ class TasksController < ApplicationController
     @sort = params[:sort]  #which column to sort on (due_date,priority,etc.)
     @direction = params[:direction] == "desc" ? "desc" : "asc" #sort direction(asc or desc), defaults to "asc" unless explicitly "desc"
     #Starts with all tasks belonging to the logged-in user, eager loading their associated user records. This means Rails loads the related user data for all tasks in advance, in a single query, so we dont hit the DB everytime we call task.user. This is optimized.
-    base = current_user.tasks.includes(:user)
+    base = current_user.tasks.includes(:user)  
     #Apply a filter so only tasks with the desired status remain.
     base = base.by_status(@status_filter)   #uses scope to easily filter using the status
 
