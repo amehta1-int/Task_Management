@@ -1,4 +1,4 @@
-#Controller that creates a new user and a default task. This will be atomic in nature- either both tasks will be done or both will fail
+
 class UsersController < ApplicationController
   def new
     @user = User.new
@@ -15,6 +15,8 @@ class UsersController < ApplicationController
       format.json { render json: { message: "Account created. You are now logged in.", user_id: @user.id }, status: :created }
     end
   rescue ActiveRecord::RecordInvalid  #If validations fail, save! or create! raises ActiveRecord::RecordInvalid
+    @user = User.new(user_params)
+    @user.validate
     flash.now[:alert] = "Please fix the errors below."
 
     respond_to do |format|
