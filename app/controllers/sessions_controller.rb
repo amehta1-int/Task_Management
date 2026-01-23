@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
       password: params[:password]
     ).call
 
-    if user
+    if user&.authenticate(params[:password])   #uses Rails' has_secure_password (bcrypt) to check the password against the stored password_digest
       session[:user_id] = user.id    #On success, stores the user id in the session cookie
       flash[:notice] = "Logged in successfully."  #SHows a flash message
 
