@@ -1,33 +1,38 @@
 <%= form_with model: task do |f| %>
-    <% if task.errors.any? %>
+  <% if task.errors.any? %>
+    <div class="form-errors">
       <h3>Errors:</h3>
       <ul>
         <% task.errors.full_messages.each do |m| %>
           <li><%= m %></li>
         <% end %>
       </ul>
-    <% end %>
-  
-    <p>
-      <%= f.label :title %><br>
-      <%= f.text_field :title %>
-    </p>
-  
-    <p>
-      <%= f.label :status %><br>
-      <%= f.select :status, Task.statuses.keys.map { |s| [s.humanize, s] } %>
-    </p>
-  
-    <p>
-      <%= f.label :priority %><br>
-      <%= f.select :priority, Task.priorities.keys.map { |p| [p.humanize, p] } %>
-    </p>
-  
-    <p>
-      <%= f.label :due_date %><br>
-      <%= f.date_field :due_date %>
-    </p>
-  
-    <%= f.submit %>
+    </div>
   <% end %>
+
+  <div class="form-field">
+    <%= f.label :title %>
+    <%= f.text_field :title %>
+  </div>
+
+  <div class="form-field">
+    <%= f.label :status %>
+    <%= f.select :status, Task.statuses.keys.map { |s| [s.humanize, s] } %>
+  </div>
+
+  <div class="form-field">
+    <%= f.label :priority %>
+    <%= f.select :priority, Task.priorities.keys.map { |p| [p.humanize, p] } %>
+  </div>
+
+  <div class="form-field">
+    <%= f.label :due_date %>
+    <%= f.date_field :due_date %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit "Save Task", class: "btn" %>
+    <%= link_to "Back", tasks_path, class: "btn btn-ghost" %>
+  </div>
+<% end %>
   
