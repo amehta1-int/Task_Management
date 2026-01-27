@@ -3,12 +3,12 @@ class TasksController < ApplicationController
   before_action :set_task, only: [:show, :edit, :update, :destroy]  #the set_task callback only runs before show, edit, update, destroy actions
 
   def index
-    @status_filter = params[:status] #which status to filter tasks by
+    @status_filter = Array(params[:status]).reject(&:blank?) #which statuses to filter tasks by
     @sort = params[:sort]  #which column to sort on (due_date,priority,etc.)
     @direction = params[:direction] == "desc" ? "desc" : "asc" #sort direction(asc or desc), defaults to "asc" unless explicitly "desc"
     @tasks = Tasks::Query.new(
       user: current_user,
-      status: @status_filter,
+      status: @status_filter.presence,
       sort: @sort,
       direction: @direction
     ).call
