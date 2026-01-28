@@ -1,15 +1,11 @@
-#Controller that creates a new user and a default task. This will be atomic in nature- either both tasks will be done or both will fail
+
 class UsersController < ApplicationController
   def new
     @user = User.new
   end
 
   def create
-    @user = User.new(user_params)  #ORM command on model
-    
-    ActiveRecord::Base.transaction do
-      @user.save!   #ORM command on instance variable
-    end
+    @user = Users::SignUp.new(params: user_params).call
 
     session[:user_id] = @user.id  #Stores the new user's ID in the session cookie. This logs the user immediately in after signup.
     flash[:notice] = "Account created. You are now logged in."
@@ -19,6 +15,8 @@ class UsersController < ApplicationController
       format.json { render json: { message: "Account created. You are now logged in.", user_id: @user.id }, status: :created }
     end
   rescue ActiveRecord::RecordInvalid  #If validations fail, save! or create! raises ActiveRecord::RecordInvalid
+    @user = User.new(user_params)
+    @user.validate
     flash.now[:alert] = "Please fix the errors below."
 
     respond_to do |format|

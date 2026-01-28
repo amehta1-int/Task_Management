@@ -1,48 +1,64 @@
-<h2>Your Tasks</h2>
+<div class="page-head">
+  <div>
+    <h2>Your Tasks</h2>
+    <p class="text-muted">Stay on top of what's next and what matters most.</p>
+  </div>
+  <%= link_to "New Task", new_task_path, class: "btn" %>
+</div>
 
-<p>
-  <%= link_to "New Task", new_task_path %>
-</p>
+<div class="card section soft">
+  <div class="filter-group">
+    <span class="filter-label">Status</span>
+    <%= form_with url: tasks_path, method: :get, local: true do %>
+      <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
+      <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
+      <%= link_to "All", tasks_path(sort: params[:sort], direction: params[:direction]), class: "pill #{'active' if @status_filter.blank?}" %>
+      <% Task.statuses.keys.each do |s| %>
+        <label class="pill <%= 'active' if @status_filter.include?(s) %>">
+          <%= check_box_tag "status[]", s, @status_filter.include?(s) %>
+          <%= s.humanize %>
+        </label>
+      <% end %>
+      <%= submit_tag "Apply", class: "btn btn-secondary btn-sm" %>
+    <% end %>
+  </div>
+</div>
 
-<h3>Filter</h3>
-<p>
-  Status:
-  <%= link_to "All", tasks_path %> |
-  <% Task.statuses.keys.each do |s| %>
-    <%= link_to s.humanize, tasks_path(status: s, sort: params[:sort], direction: params[:direction]) %>
-    <% unless s == Task.statuses.keys.last %> | <% end %>
-  <% end %>
-</p>
+<div class="card section soft">
+  <div class="filter-group">
+    <span class="filter-label">Sort</span>
+    <%= link_to "Due date (asc)", tasks_path(status: @status_filter.presence, sort: "due_date", direction: "asc"), class: "pill #{'active' if params[:sort] == 'due_date' && params[:direction] == 'asc'}" %>
+    <%= link_to "Due date (desc)", tasks_path(status: @status_filter.presence, sort: "due_date", direction: "desc"), class: "pill #{'active' if params[:sort] == 'due_date' && params[:direction] == 'desc'}" %>
+    <%= link_to "Priority (asc)", tasks_path(status: @status_filter.presence, sort: "priority", direction: "asc"), class: "pill #{'active' if params[:sort] == 'priority' && params[:direction] == 'asc'}" %>
+    <%= link_to "Priority (desc)", tasks_path(status: @status_filter.presence, sort: "priority", direction: "desc"), class: "pill #{'active' if params[:sort] == 'priority' && params[:direction] == 'desc'}" %>
+  </div>
+</div>
 
-<h3>Sort</h3>
-<p>
-  <%= link_to "Due date (asc)", tasks_path(status: params[:status], sort: "due_date", direction: "asc") %> |
-  <%= link_to "Due date (desc)", tasks_path(status: params[:status], sort: "due_date", direction: "desc") %> |
-  <%= link_to "Priority (asc)", tasks_path(status: params[:status], sort: "priority", direction: "asc") %> |
-  <%= link_to "Priority (desc)", tasks_path(status: params[:status], sort: "priority", direction: "desc") %>
-</p>
-
-<table border="1" cellpadding="6">
-  <tr>
-    <th>Title</th>
-    <th>Status</th>
-    <th>Priority</th>
-    <th>Due date</th>
-    <th>Owner</th>
-    <th>Actions</th>
-  </tr>
-
-  <% @tasks.each do |task| %>
+<div class="card table-card">
+  <table class="table">
     <tr>
-      <td><%= link_to task.title, task_path(task) %></td>
-      <td><%= task.status.humanize %></td>
-      <td><%= task.priority.humanize %></td>
-      <td><%= task.due_date || "-" %></td>
-      <td><%= task.user.name %></td>
-      <td>
-        <%= link_to "Edit", edit_task_path(task) %> |
-        <%= button_to "Delete", task_path(task), method: :delete, data: { turbo_confirm: "Delete this task?" } %>
-      </td>
+      <th>Title</th>
+      <th>Status</th>
+      <th>Priority</th>
+      <th>Due date</th>
+      <th>Owner</th>
+      <th>Actions</th>
     </tr>
-  <% end %>
-</table>
+
+    <% @tasks.each do |task| %>
+      <tr>
+        <td><%= link_to task.title, task_path(task) %></td>
+        <td><span class="badge status <%= task.status %>"><%= task.status.humanize %></span></td>
+        <td><span class="badge priority <%= task.priority %>"><%= task.priority.humanize %></span></td>
+        <td><%= task.due_date || "-" %></td>
+        <td><%= task.user.name %></td>
+        <td>
+          <div class="table-actions">
+            <%= link_to "Edit", edit_task_path(task), class: "btn btn-secondary btn-sm" %>
+            <%= button_to "Delete", task_path(task), method: :delete, data: { turbo_confirm: "Delete this task?" }, class: "btn btn-danger btn-sm", form_class: "inline-form" %>
+          </div>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+</div>

@@ -1,34 +1,42 @@
-<h2>Create your account</h2>
+<div class="card section">
+  <h2>Create your account</h2>
+  <p class="text-muted">Join to start organizing your tasks instantly.</p>
 
-<%= form_with model: @user, url: signup_path do |f| %>
-  <% if @user.errors.any? %>
-    <h3>Errors:</h3>
-    <ul>
-      <% @user.errors.full_messages.each do |m| %>
-        <li><%= m %></li>
-      <% end %>
-    </ul>
+  <%= form_with model: @user, url: signup_path do |f| %>
+    <% if @user.errors.any? %>
+      <div class="form-errors">
+        <h3>Errors:</h3>
+        <ul>
+          <% @user.errors.full_messages.each do |m| %>
+            <li><%= m %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-field">
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :email %>
+      <%= f.email_field :email %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :password %>
+      <%= f.password_field :password %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :password_confirmation %>
+      <%= f.password_field :password_confirmation %>
+    </div>
+
+    <div class="form-actions">
+      <%= f.submit "Sign up", class: "btn" %>
+      <%= link_to "Login", login_path, class: "btn btn-ghost" %>
+    </div>
   <% end %>
-
-  <p>
-    <%= f.label :name %><br>
-    <%= f.text_field :name %>
-  </p>
-
-  <p>
-    <%= f.label :email %><br>
-    <%= f.email_field :email %>
-  </p>
-
-  <p>
-    <%= f.label :password %><br>
-    <%= f.password_field :password %>
-  </p>
-
-  <p>
-    <%= f.label :password_confirmation %><br>
-    <%= f.password_field :password_confirmation %>
-  </p>
-
-  <%= f.submit "Sign up" %>
-<% end %>
+</div>

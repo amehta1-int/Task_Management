@@ -3,8 +3,10 @@ class SessionsController < ApplicationController
   end
 
   def create
-    email = params[:email].to_s.strip.downcase  #lowercases the removes the whitespace from the email
-    user = User.find_by(email: email)   #finds the user with the email id
+    user = Sessions::Authenticate.new(
+      email: params[:email],
+      password: params[:password]
+    ).call
 
     if user&.authenticate(params[:password])   #uses Rails' has_secure_password (bcrypt) to check the password against the stored password_digest
       session[:user_id] = user.id    #On success, stores the user id in the session cookie
