@@ -13,7 +13,7 @@ priority, making it easy to keep work tracked and visible.
 - Ruby 3.2.6
 - Rails 8.1.2
 - MySQL 5.7+
-- RSpec for testing
+- RSpec + Capybara for testing
 
 ### Core Domains
 
@@ -54,7 +54,8 @@ rails server
 
 ## Tests
 
-RSpec covers model, request, service, and system specs. Run the full suite with:
+RSpec covers model, request, service, and system specs. Capybara is used for
+system tests. Run the full suite with:
 
 ```bash
 bundle exec rspec
