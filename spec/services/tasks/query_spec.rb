@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Tasks::Query do
+RSpec.describe QueryTasksService do
   describe "#call" do
     it "filters by status when provided" do
       user = create(:user)

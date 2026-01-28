@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = Sessions::Authenticate.new(
+    user = SessionsAuthenticateService.new(
       email: params[:email],
       password: params[:password]
     ).call

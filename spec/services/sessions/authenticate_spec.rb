@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Sessions::Authenticate do
+RSpec.describe SessionsAuthenticateService do
   describe "#call" do
     it "returns the user for valid credentials" do
       user = create(:user, email: "Test@Example.com", password: "password123")

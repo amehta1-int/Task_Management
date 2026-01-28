@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Users::SignUp do
+RSpec.describe SignUpUsersService do
   describe "#call" do
     it "creates a new user" do
       user = described_class.new(

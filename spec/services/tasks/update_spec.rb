@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Tasks::Update do
+RSpec.describe UpdateTasksService do
   describe "#call" do
     it "updates a task with valid params" do
       task = create(:task, title: "Old title")
