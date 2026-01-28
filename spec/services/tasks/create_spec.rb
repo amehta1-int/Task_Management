@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Tasks::Create do
+RSpec.describe CreateTasksService do
   describe "#call" do
     it "creates a task for the user" do
       user = create(:user)

@@ -6,7 +6,7 @@ class TasksController < ApplicationController
     @status_filter = Array(params[:status]).reject(&:blank?) #which statuses to filter tasks by
     @sort = params[:sort]  #which column to sort on (due_date,priority,etc.)
     @direction = params[:direction] == "desc" ? "desc" : "asc" #sort direction(asc or desc), defaults to "asc" unless explicitly "desc"
-    @tasks = Tasks::Query.new(
+    @tasks = QueryTasksService.new(
       user: current_user,
       status: @status_filter.presence,
       sort: @sort,
@@ -41,7 +41,7 @@ class TasksController < ApplicationController
   end
 
   def create  #creates a new task with the strong parameters
-    @task = Tasks::Create.new(user: current_user, params: task_params).call
+    @task = CreateTasksService.new(user: current_user, params: task_params).call
 
     if @task.persisted?
       flash[:notice] = "Task created."
@@ -70,7 +70,7 @@ class TasksController < ApplicationController
 
 
   def update
-    if Tasks::Update.new(task: @task, params: task_params).call
+    if UpdateTasksService.new(task: @task, params: task_params).call
       flash[:notice] = "Task updated."
 
       respond_to do |format|

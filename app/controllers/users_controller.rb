@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = Users::SignUp.new(params: user_params).call
+    @user = SignUpUsersService.new(params: user_params).call
 
     session[:user_id] = @user.id  #Stores the new user's ID in the session cookie. This logs the user immediately in after signup.
     flash[:notice] = "Account created. You are now logged in."
